@@ -171,10 +171,10 @@ def main():
         print("交期已被更改")
 
     
-    #copy_file(fileNames[1], fileNames[0]) # 將今天的檔案轉換為下次分析時昨天的檔案
-    #remove_file(fileNames[1]) #刪除今天的檔案
+    copy_file(fileNames[1], fileNames[0]) # 將今天的檔案轉換為下次分析時昨天的檔案
+    remove_file(fileNames[1]) #刪除今天的檔案
 
-    #input("請按任意鍵結束...") # 讓視窗停留，不要馬上關閉
+    input("請按任意鍵結束...") # 讓視窗停留，不要馬上關閉
 
 
 # In[9]:
