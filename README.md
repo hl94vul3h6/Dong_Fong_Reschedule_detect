@@ -1,4 +1,57 @@
-# Dong_Fong_Reschedule_detect
+# Dong_Fong_Reschedule_detect<br>
+
+## Alert: Delivery Date Change Notification<br>
+Detect orders from the daily Excel data exported from the ERP where the delivery date (scheduled delivery date) has been modified, and there's a potential for late delivery. Finally, email the results to all sales representatives, allowing them to verify orders they are responsible for based on their sales representative ID.<br>
+
+#### Attachment Description:<br>
+1. **email.txt**: Used to modify the sender and recipient emails. See instructions within the file for input methods.<br>
+2. **fileName.txt**: To modify the names of the two files you wish to compare. Refer to the instructions inside the file for input methods.<br>
+
+#### Data Processing Explanation:<br>
+1. Assume the ERP exports a month of order data daily, and the expected completion date = expected off-machine date + 10 days.<br>
+2. After reading two consecutive days of data, use the 'pk' field to identify duplicate data and handle it, identifying any changes made to the expected delivery or off-machine dates.<br>
+3. Extract data with changed expected delivery dates.<br>
+4. Identify data that might be late (where the expected completion date exceeds the agreed delivery date).<br>
+5. Consolidate the information needed by sales representatives, convert it to HTML, and send via email.<br>
+
+#### Program Logic Explanation:<br>
+1. pk (unique) = Order Number + Item Number<br>
+2. df = Yesterday's data [4/1-5/1] = [4/1 + 4/2-5/1 (Before change + Unchanged)]<br>
+3. df1 = Today's data [4/2-5/2] = [5/2 + 4/2-5/1 (After change + Unchanged)]<br>
+4. tmp [4/1 + 5/2 + 4/2-5/1] = Yesterday's data + Today's data (All new rows added)<br>
+5. all_diff [4/1 + 5/2 + 4/2-5/1] = All unique data between yesterday and today (including orders with the same 'pk' before and after change)<br>
+6. pk_diff [4/1 + 5/2 + 4/2-5/1 (Unchanged)] = All data between yesterday and today with unique 'pk' values (excluding all modified orders)<br>
+7. first [4/1 + 4/2-5/1 (Before change + Unchanged)] = All data with unique 'pk' values (including pre-modified orders, excluding post-modified orders)<br>
+8. last [5/2 + 4/2-5/1 (After change + Unchanged)] = All data with unique 'pk' values (including post-modified orders, excluding pre-modified orders)<br>
+9. old [4/2-5/1 (Before change)] = All modified data from yesterday<br>
+10. new [4/2-5/1 (After change)] = All modified data from today<br>
+11. merged_data [4/2-5/1 (Before + After change)] = All data from two days where delivery date or off-machine date was modified, displaying both days' dates separately.<br>
+12. changed_data [4/2-5/1 (Changed delivery date)] = All data with modified delivery dates over two days.<br>
+13. delayed_data [4/2-5/1 (Changed delivery date & potential delay)] = Data from 'changed_data' where the expected completion date > agreed delivery date.<br>
+14. final = The final notification content to be emailed to sales reps, selected from 'delayed_data' with columns reformatted as needed.<br>
+
+#### Order Test File Explanation:<br>
+1. Day 1 data: **Order test.xlsx**<br>
+2. Day 2 data:<br>
+   1. **Order test_No Notification.xlsx** (Shouldn't receive an email)<br>
+   2. **Order test_Notify.xlsx** (Should receive notifications for Items 1 and 3)<br>
+
+#### Each item's data representation:
+
+| Item | Scheduled Delivery Date | Expected Off-Machine Date | Potential Late Delivery | Send Notification |
+|:----:|:-----------------------:|:-------------------------:|:-----------------------:|:-----------------:|
+|  1   |       Changed           |       Changed             |         Yes             |        Yes        |
+|  2   |       Changed           |       Changed             |         No              |        No         |
+|  3   |       Changed           |       Unchanged           |         Yes             |        Yes        |
+|  4   |       Changed           |       Unchanged           |         No              |        No         |
+|  5   |       Unchanged         |       Changed             |         Yes             |        No         |
+|  6   |       Unchanged         |       Changed             |         No              |        No         |
+|  7   |       Unchanged         |       Unchanged           |         Yes             |        No         |
+|  8   |       Unchanged         |       Unchanged           |         No              |        No         |
+
+
+
+# Dong_Fong_Reschedule_detect_中文版解釋
 
 ## Alert: 交期更改通知
 找出ERP每天轉出的Excel訂單資料中，交期 (排定交貨日) 有修改且該訂單可能遲交的的數據。再將最後結果 email 給所有業務，業務可由業務編號自行核對是否有自己負責的訂單。 <br>
